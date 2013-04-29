@@ -37,16 +37,15 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
             return resized;
         };
 
-        this.draw = function (id) {
+        this.draw = function (element) {
             var deferred = $q.defer(),
-                canvas = document.getElementById(id),
                 options = {};
-            if (!canvas) {
+            if (!element) {
                 return $q.reject('No image element is set');
             }
             options.maxHeight = $scope.maxHeight || 300;
             options.maxWidth = $scope.maxWidth || 250;
-            options.quality = $scope.quality || 0.7;
+            options.quality = $scope.quality || 1;
             var height = original.height;
             var width = original.width;
             if (width > height) {
@@ -60,11 +59,11 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                     height = options.maxHeight;
                 }
             }
-            canvas.width = width;
-            canvas.height = height;
-            var context = canvas.getContext("2d");
+            element.width = width;
+            element.height = height;
+            var context = element.getContext("2d");
             context.drawImage(original, 0, 0, width, height);
-            canvas.toBlob(function (res) {
+            element.toBlob(function (res) {
                 resized = res;
                 resized.name = name;
                 resized.url = URL.createObjectURL(res);
@@ -74,7 +73,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
         }
     }
 
-    function Spinner(id, options, rgb) {
+    function Spinner(element, options, rgb) {
         var timer, node, color = rgb || [0, 0, 0];
 
         function buildSpinner(data) {
@@ -92,14 +91,13 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                     y: top
                 };
             };
-            var mainCanvas = document.getElementById(id);
-            var mainPos = position(mainCanvas);
+            var mainPos = position(element);
             var canvas = document.createElement("canvas");
             node = canvas;
             canvas.height = options.maxHeight;
             canvas.width = options.maxWidth;
-            canvas.style.left = mainPos.x + mainCanvas.width / 2 - options.maxWidth / 2;
-            canvas.style.top = mainPos.y + mainCanvas.height / 2 - options.maxHeight / 2;
+            canvas.style.left = mainPos.x + element.width / 2 - options.maxWidth / 2;
+            canvas.style.top = mainPos.y + element.height / 2 - options.maxHeight / 2;
             canvas.style.position = "absolute";
             canvas.style.zIndex = 1;
             document.body.appendChild(canvas);
@@ -183,25 +181,23 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
             quality: '@',
             post: '@',
             params: '@',
-            spinner: '@'
+            spinner: '@',
+            afterEvent: '@'
         },
-        templateUrl: 'js/directives/uploads.html',
+        templateUrl: '/js/directives/uploads.html',
 
         link: function ($scope, $element, $attrs) {
             var spinner,
-                canvas = "upload_canvas";
+                canvas = $element.children()[0],
+                img = new Img($scope);
+
             if ($attrs.spinner === "true") {
                 spinner = new Spinner(canvas, $attrs);
             }
 
-            var img = new Img($scope);
             img.load($attrs.src).then(function () {
-                img.draw(canvas)
+                img.draw(canvas);
             });
-
-            $scope.dialog = function () {
-                document.getElementById('upload_file_field').click();
-            };
 
             $element.bind('change', function (evt) {
                 var file = $scope.file = evt.target.files[0];
@@ -210,6 +206,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                         spinner && spinner.start();
                         upload($scope.post, $scope.params, img.blob()).then(function () {
                                 spinner && spinner.stop();
+                                $scope.afterEvent && $scope.$emit($scope.afterEvent);
                             }, function () {
                                 spinner && spinner.stop();
                             }
