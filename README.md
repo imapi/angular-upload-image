@@ -7,12 +7,12 @@ This is a partial fork of [Mischi](https://github.com/Mischi/angularjs-imageuplo
 In the future this would be a set of uploading directives for different kind of files.
 
 ## Run
-
+```bash
   https://github.com/imapi/angular-upload-image.git
   cd angular-upload-image
   npm install
   node app.js
-
+```
 ## Usage
   
                 <upload-image
