@@ -8,7 +8,7 @@ In the future this would be a set of uploading directives for different kind of 
 
 ## Run
 ```bash
-  https://github.com/imapi/angular-upload-image.git
+  git clone https://github.com/imapi/angular-upload-image.git
   cd angular-upload-image
   npm install
   node app.js
