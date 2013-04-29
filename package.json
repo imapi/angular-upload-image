@@ -1,14 +1,14 @@
 {
   "name": "angularjs-imageupload-directive",
   "version": "0.0.1",
-  "description": "Upload and resize images with AngularJS. Proof of Concept.",
+  "description": "Upload and resize images with AngularJS.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Mischi/angularjs-imageupload-directive.git"
+    "url": "https://github.com/imapi/angular-upload-image.git"
   },
   "keywords": [
     "AngularJS",
@@ -16,8 +16,8 @@
     "Upload",
     "Resizing"
   ],
-  "author": "Fabian Raetz",
-  "license": "BSD",
+  "author": "Ivan Bondarenko",
+  "license": "MIT",
   "dependencies": {
     "express": "~3.1.0"
   }
