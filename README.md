@@ -27,8 +27,10 @@ In the future this would be a set of uploading directives for different kind of 
 
 Where:
   src - image src;
-  post - url to post the new image;
-  max-height - max height for the image;
+  post - url to post the new image
+  
+  max-height - max height for the image
+  
   max-widht - max width for the image;
   quality - encoding quality (jpg);
   after-event - event name which would be triggered after successful uploading, you can handle it via $scope.$on('event name');
