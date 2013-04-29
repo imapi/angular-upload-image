@@ -26,6 +26,7 @@ In the future this would be a set of uploading directives for different kind of 
                 </upload-image>
 
 Where:
+
   src - image src
   
   post - url to post the new image
