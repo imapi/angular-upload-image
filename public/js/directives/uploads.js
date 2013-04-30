@@ -171,19 +171,22 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
         return deferred.promise;
     };
 
-    var buildUrl = function(base, params, disableCache) {
-        var salt = disableCache ? new Date().getTime() : "";
+    var buildUrl = function(url, params, disableCache) {
+        function salt(prefix) {
+            return disableCache ? prefix + new Date().getTime() : "";
+        }
+
         if (!params) {
             params = "";
         } else if (params instanceof Function) {
             params = params();
         }
         if (params === "") {
-            return url + "?" + salt;
-        } else if (params.contain("?")) {
-            return url + params + "&" + salt;
+            return url + salt("?");
+        } else if (params.indexOf("?") > -1) {
+            return url + params + salt("&");
         }
-        return url + params + "?" + salt;
+        return url + params + salt("?");
 
     };
 
@@ -196,8 +199,8 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
             maxWidth: '@',
             quality: '@',
             post: '@',
-            srcParams: '=',
-            postParams: '=',
+            srcParamsFn: '=',
+            postParamsFn: '=',
             spinner: '@',
             afterEvent: '@'
         },
