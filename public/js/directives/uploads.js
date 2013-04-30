@@ -68,7 +68,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                 resized.name = name;
                 resized.url = URL.createObjectURL(res);
                 deferred.resolve();
-            }, "image/jpeg", options.quality);
+            }, "image/png", options.quality);
             return deferred.promise;
         }
     }
