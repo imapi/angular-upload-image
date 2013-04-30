@@ -156,7 +156,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
         }
     }
 
-    var upload = function (url, params, blob) {
+    var upload = function (url, blob) {
         var deferred = $q.defer();
         var formData = new FormData();
         formData.append('image', blob, blob.name);
@@ -171,6 +171,22 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
         return deferred.promise;
     };
 
+    var buildUrl = function(base, params, disableCache) {
+        var salt = disableCache ? new Date().getTime() : "";
+        if (!params) {
+            params = "";
+        } else if (params instanceof Function) {
+            params = params();
+        }
+        if (params === "") {
+            return url + "?" + salt;
+        } else if (params.contain("?")) {
+            return url + params + "&" + salt;
+        }
+        return url + params + "?" + salt;
+
+    };
+
     return {
         restrict: 'EA',
         replace: true,
@@ -180,7 +196,8 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
             maxWidth: '@',
             quality: '@',
             post: '@',
-            params: '@',
+            srcParams: '=',
+            postParams: '=',
             spinner: '@',
             afterEvent: '@'
         },
@@ -195,7 +212,8 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                 spinner = new Spinner(canvas, $attrs);
             }
 
-            img.load($attrs.src).then(function () {
+            var src = buildUrl($attrs.src, $scope.srcParams, true);
+            img.load(src).then(function () {
                 img.draw(canvas);
             });
 
@@ -204,7 +222,8 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                 img.read(file).then(function () {
                     img.draw(canvas).then(function () {
                         spinner && spinner.start();
-                        upload($scope.post, $scope.params, img.blob()).then(function () {
+                        var post = buildUrl($scope.post, $scope.params, false);
+                        upload(post, img.blob()).then(function () {
                                 spinner && spinner.stop();
                                 $scope.afterEvent && $scope.$emit($scope.afterEvent);
                             }, function () {
@@ -216,5 +235,4 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
             });
         }
     }
-}])
-;
+}]);
