@@ -215,7 +215,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                 spinner = new Spinner(canvas, $attrs);
             }
 
-            var src = buildUrl($attrs.src, $scope.srcParams, true);
+            var src = buildUrl($attrs.src, $scope.srcParamsFn, true);
             img.load(src).then(function () {
                 img.draw(canvas);
             });
@@ -225,7 +225,7 @@ module.directive('uploadImage', ['$q', '$http', function ($q, $http) {
                 img.read(file).then(function () {
                     img.draw(canvas).then(function () {
                         spinner && spinner.start();
-                        var post = buildUrl($scope.post, $scope.params, false);
+                        var post = buildUrl($scope.post, $scope.postParamsFn, false);
                         upload(post, img.blob()).then(function () {
                                 spinner && spinner.stop();
                                 $scope.afterEvent && $scope.$emit($scope.afterEvent);
